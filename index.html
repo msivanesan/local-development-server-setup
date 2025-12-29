@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN Development Server Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #ffffff;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        h1 {
+            font-size: 2em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: .3em;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: .3em;
+        }
+
+        h3 {
+            font-size: 1.25em;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        code {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 85%;
+            background-color: #f6f8fa;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        pre {
+            padding: 16px;
+            overflow: auto;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        table th,
+        table td {
+            padding: 6px 13px;
+            border: 1px solid #dfe2e5;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+
+        blockquote {
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+            margin: 0 0 16px 0;
+        }
+
+        img {
+            max-width: 100%;
+            box-sizing: content-box;
+            background-color: #fff;
+        }
+
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e1e4e8;
+            border: 0;
+        }
+
+        ul,
+        ol {
+            padding-left: 2em;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        li {
+            margin-top: 0.25em;
+        }
+
+        .warning {
+            padding: 8px 16px;
+            background-color: #fff5b1;
+            border: 1px solid #e2c08d;
+            border-radius: 6px;
+            color: #735c0f;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📘 COMPLETE DOCUMENTATION</h1>
+
+    <h2>LAN DEVELOPMENT SERVER (PHP + Flask + Django + Storage)</h2>
+
+    <hr>
+
+    <h1>🔑 CREDENTIALS OVERVIEW</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th align="left">Service / User Type</th>
+                <th align="left">Username</th>
+                <th align="left">Password</th>
+                <th align="left">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="left"><strong>System Admin (Root)</strong></td>
+                <td align="left"><code>devadmin</code></td>
+                <td align="left"><code>Dev@123</code></td>
+                <td align="left">Created during installation</td>
+            </tr>
+            <tr>
+                <td align="left"><strong>Desktop / RDP User</strong></td>
+                <td align="left"><code>devuser</code></td>
+                <td align="left"><code>Dev@123</code></td>
+                <td align="left">For GUI Access (Step 6)</td>
+            </tr>
+            <tr>
+                <td align="left"><strong>Samba (Storage)</strong></td>
+                <td align="left"><code>devadmin</code></td>
+                <td align="left"><code>Dev@123</code></td>
+                <td align="left">For File Sharing</td>
+            </tr>
+            <tr>
+                <td align="left"><strong>MySQL User</strong></td>
+                <td align="left"><code>devadmin</code></td>
+                <td align="left"><code>Dev@123</code></td>
+                <td align="left">For Database Access</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <blockquote>
+        <p><strong>⚠️ IMPORTANT:</strong> These are credentials for real environment.</p>
+    </blockquote>
+
+    <hr>
+
+    <h1>🧱 OVERVIEW (FINAL RESULT)</h1>
+
+    <p>After completing this guide:</p>
+
+    <ul>
+        <li>One PC runs <strong>Ubuntu</strong></li>
+        <li>Acts as a <strong>development server</strong></li>
+        <li>Accessible from <strong>any Windows PC on LAN</strong></li>
+        <li>Supports <strong>multiple projects</strong></li>
+        <li>Files edited directly from <strong>Windows</strong></li>
+        <li>URLs look like:</li>
+    </ul>
+
+    <pre><code>http://192.168.5.25/project1
+http://192.168.5.25/convex_msql
+http://192.168.5.25/shop
+</code></pre>
+
+    <ul>
+        <li>Storage mapped as a <strong>Windows drive</strong>:</li>
+    </ul>
+
+    <pre><code>Z:\php
+Z:\flask
+Z:\django
+</code></pre>
+
+    <p><img src="https://media-zep-analytics.s3.ap-south-1.amazonaws.com/uploads/blogs/1685528882.png" alt="Image"></p>
+    <p><img src="https://www.conceptdraw.com/How-To-Guide/picture/Computer-and-networks-Local-area-network-diagram.png"
+            alt="Image"></p>
+    <p><img src="https://www.cs.iastate.edu/files/inline-images/windowsMap.PNG" alt="Image"></p>
+
+    <hr>
+
+    <h1>🔹 STEP 1 — DOWNLOAD OPERATING SYSTEM</h1>
+
+    <h2>Download</h2>
+
+    <p>Download <strong>Ubuntu 22.04 Live Server LTS</strong><br>
+        (Server is more lightweight and efficient)</p>
+
+    <hr>
+
+    <h1>🔹 STEP 2 — CREATE BOOTABLE USB (WINDOWS)</h1>
+
+    <ol>
+        <li>Download <strong>Rufus</strong></li>
+        <li>Insert USB (8 GB+)</li>
+        <li>Rufus settings:
+            <ul>
+                <li>Partition scheme: <strong>GPT</strong></li>
+                <li>Target system: <strong>UEFI</strong></li>
+                <li>File system: <strong>FAT32</strong></li>
+            </ul>
+        </li>
+        <li>Select Ubuntu ISO</li>
+        <li>Click <strong>START</strong></li>
+    </ol>
+
+    <hr>
+
+    <h1>🔹 STEP 3 — INSTALL UBUNTU SERVER</h1>
+
+    <ol>
+        <li>Boot PC from USB</li>
+        <li>Select <strong>Try or Install Ubuntu Server</strong></li>
+        <li>Language/Keyboard: <strong>English</strong></li>
+        <li>Network: Keep default (DHCP) for now</li>
+        <li>Storage:
+            <pre><code>Use an entire disk
+(Uncheck LVM if not needed, or keep default)
+</code></pre>
+        </li>
+        <li>Profile Setup:
+            <pre><code>Your name: Dev Admin
+Your server's name: dev-server
+Pick a username: devadmin
+Choose a password: Dev@123
+</code></pre>
+        </li>
+        <li>SSH Setup:
+            <ul>
+                <li>[x] <strong>Install OpenSSH server</strong> (Important)</li>
+            </ul>
+        </li>
+        <li>Featured Snaps: Skip (Select Done)</li>
+        <li>Finish install → Reboot → Remove USB</li>
+    </ol>
+
+    <hr>
+
+    <h1>🔹 STEP 4 — UPDATE SYSTEM</h1>
+
+    <p>Open Terminal:</p>
+
+    <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt upgrade -y
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 5 — SET STATIC IP (CRITICAL)</h1>
+
+    <h3>Find network interface</h3>
+
+    <pre><code class="language-bash">ip a
+</code></pre>
+
+    <p>Example interface: <code>enp0s3</code></p>
+
+    <h3>Edit Netplan</h3>
+
+    <pre><code class="language-bash">sudo nano /etc/netplan/01-network-manager-all.yaml
+</code></pre>
+
+    <p>Paste (change interface if needed):</p>
+
+    <pre><code class="language-yaml">network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s31f6:
+      dhcp4: false
+      addresses:
+        - 192.168.5.25/24
+      gateway4: 192.168.5.1
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+</code></pre>
+
+    <p>Apply:</p>
+
+    <pre><code class="language-bash">sudo netplan apply
+</code></pre>
+
+    <p>Verify:</p>
+
+    <pre><code class="language-bash">ip a
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 6 — CONFIGURE REMOTE ACCESS (SSH + XRDP)</h1>
+
+    <h2>📌 Environment</h2>
+
+    <ul>
+        <li>OS: Ubuntu Server (22.04 / 24.04)</li>
+        <li>GUI: XFCE</li>
+        <li>Remote GUI Access: XRDP</li>
+        <li>Remote CLI Access: SSH</li>
+        <li>Network: Static IP / Authenticated Network</li>
+    </ul>
+
+    <hr>
+
+    <h2>6.1 Create a New User</h2>
+
+    <pre><code class="language-bash">sudo adduser devuser
+sudo usermod -aG sudo devuser
+</code></pre>
+
+    <p>Verify:</p>
+
+    <pre><code class="language-bash">id devuser
+</code></pre>
+
+    <hr>
+
+    <h2>6.2 Enable SSH (CLI Access)</h2>
+
+    <p>Install &amp; start SSH</p>
+
+    <pre><code class="language-bash">sudo apt update
+sudo apt install openssh-server -y
+sudo systemctl enable ssh
+sudo systemctl start ssh
+</code></pre>
+
+    <p>Check status:</p>
+
+    <pre><code class="language-bash">sudo systemctl status ssh
+</code></pre>
+
+    <p>Connect from Windows</p>
+
+    <pre><code class="language-bash">ssh devuser@SERVER_IP
+</code></pre>
+
+    <p>Example:</p>
+
+    <pre><code class="language-bash">ssh devuser@192.168.5.25
+</code></pre>
+
+    <hr>
+
+    <h2>6.3 Install GUI (XFCE) + XRDP</h2>
+
+    <pre><code class="language-bash">sudo apt install xfce4 xfce4-goodies xrdp -y
+</code></pre>
+
+    <p>Enable XRDP:</p>
+
+    <pre><code class="language-bash">sudo systemctl enable xrdp
+sudo systemctl start xrdp
+</code></pre>
+
+    <p>Allow RDP port:</p>
+
+    <pre><code class="language-bash">sudo ufw allow 3389/tcp
+sudo ufw reload
+</code></pre>
+
+    <hr>
+
+    <h2>6.4 Configure XRDP to Use XFCE (IMPORTANT)</h2>
+
+    <p>Per-user XFCE session (REQUIRED for every user)</p>
+
+    <p>Run as that user:</p>
+
+    <pre><code class="language-bash">echo "startxfce4" &gt; ~/.xsession
+chmod +x ~/.xsession
+rm -f ~/.Xauthority
+</code></pre>
+
+    <hr>
+
+    <p>System-wide XRDP Fix (ONE-TIME)</p>
+
+    <p>Edit XRDP startup script:</p>
+
+    <pre><code class="language-bash">sudo nano /etc/xrdp/startwm.sh
+</code></pre>
+
+    <p>Comment this line:</p>
+
+    <pre><code class="language-bash"># exec /bin/sh /etc/X11/Xsession
+</code></pre>
+
+    <p>Add below it:</p>
+
+    <pre><code class="language-bash">startxfce4 &amp;
+</code></pre>
+
+    <p>Restart XRDP:</p>
+
+    <pre><code class="language-bash">sudo adduser xrdp ssl-cert
+sudo systemctl restart xrdp
+</code></pre>
+
+    <hr>
+
+    <h2>6.5 Connect to GUI from Windows (RDP)</h2>
+
+    <ol>
+        <li>Press Win + R</li>
+        <li>Type mstsc</li>
+        <li>Computer: SERVER_IP</li>
+        <li>Click Connect</li>
+    </ol>
+
+    <p>XRDP Login:</p>
+
+    <p>Session: Xorg<br>
+        Username: devuser<br>
+        Password: user password</p>
+
+    <p>✅ XFCE desktop will load.</p>
+
+    <hr>
+
+    <h2>6.6 Fix “Oh no! Something has gone wrong” (NEW USERS)</h2>
+
+    <p>This happens when .xsession is missing.</p>
+
+    <p>Fix:</p>
+
+    <pre><code class="language-bash">sudo -u devuser bash
+echo "startxfce4" &gt; ~/.xsession
+chmod +x ~/.xsession
+rm -f ~/.Xauthority
+exit
+sudo systemctl restart xrdp
+</code></pre>
+
+    <p>Apply to All Future Users (Recommended)</p>
+
+    <pre><code class="language-bash">sudo nano /etc/skel/.xsession
+</code></pre>
+
+    <p>Add:</p>
+
+    <pre><code class="language-bash">startxfce4
+</code></pre>
+
+    <hr>
+
+    <h2>6.7 Disable Sleep / Suspend (SERVER MODE)</h2>
+
+    <p>Disable system sleep completely</p>
+
+    <pre><code class="language-bash">sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+</code></pre>
+
+    <hr>
+
+    <p>Disable idle power actions</p>
+
+    <pre><code class="language-bash">sudo nano /etc/systemd/logind.conf
+</code></pre>
+
+    <p>Set:</p>
+
+    <pre><code class="language-ini">HandleSuspendKey=ignore
+HandleHibernateKey=ignore
+HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
+IdleAction=ignore
+IdleActionSec=0
+</code></pre>
+
+    <p>Apply:</p>
+
+    <pre><code class="language-bash">sudo systemctl restart systemd-logind
+</code></pre>
+
+    <hr>
+
+    <p>Disable XRDP idle timeout</p>
+
+    <pre><code class="language-bash">sudo nano /etc/xrdp/sesman.ini
+</code></pre>
+
+    <p>Set:</p>
+
+    <pre><code class="language-ini">KillDisconnected=false
+DisconnectedTimeLimit=0
+IdleTimeLimit=0
+</code></pre>
+
+    <p>Restart:</p>
+
+    <pre><code class="language-bash">sudo systemctl restart xrdp
+</code></pre>
+
+    <hr>
+
+    <p>Disable Screen Blanking (XFCE)</p>
+
+    <p>Run as XRDP user:</p>
+
+    <pre><code class="language-bash">xset -dpms
+xset s off
+xset s noblank
+</code></pre>
+
+    <p>Make permanent:</p>
+
+    <pre><code class="language-bash">nano ~/.xprofile
+</code></pre>
+
+    <p>Add:</p>
+
+    <pre><code class="language-bash">xset -dpms
+xset s off
+xset s noblank
+</code></pre>
+
+    <hr>
+
+    <h2>6.8 Prevent SSH Idle Disconnect (Optional)</h2>
+
+    <pre><code class="language-bash">sudo nano /etc/ssh/sshd_config
+</code></pre>
+
+    <p>Add:</p>
+
+    <pre><code class="language-ini">ClientAliveInterval 60
+ClientAliveCountMax 0
+</code></pre>
+
+    <p>Restart SSH:</p>
+
+    <pre><code class="language-bash">sudo systemctl restart ssh
+</code></pre>
+
+    <hr>
+
+    <h2>6.9 Safe Reboot with XRDP Users Logged In</h2>
+
+    <p>Check sessions:</p>
+
+    <pre><code class="language-bash">loginctl
+</code></pre>
+
+    <p>Terminate XRDP user:</p>
+
+    <pre><code class="language-bash">sudo loginctl terminate-user devuser
+</code></pre>
+
+    <p>Force reboot (admin):</p>
+
+    <pre><code class="language-bash">sudo reboot -f
+</code></pre>
+
+    <hr>
+
+    <h2>6.10 Final Result (Remote Access)</h2>
+
+    <ul>
+        <li>✔ SSH access working</li>
+        <li>✔ GUI access via Windows RDP</li>
+        <li>✔ New users log in without crash</li>
+        <li>✔ XFCE stable (no GNOME issues)</li>
+        <li>✔ No sleep / suspend</li>
+        <li>✔ Server always ON</li>
+    </ul>
+
+    <hr>
+
+    <h2>6.11 Notes</h2>
+
+    <ul>
+        <li>Use SSH for daily admin work</li>
+        <li>Use XRDP for GUI-only tasks</li>
+        <li>Recommended for lab / office / on-prem servers</li>
+    </ul>
+
+    <hr>
+
+    <h1>🔹 STEP 7 — INSTALL REQUIRED SOFTWARE</h1>
+
+    <pre><code class="language-bash">sudo apt install -y \
+nginx \
+php php-fpm \
+python3 python3-pip python3-venv \
+git curl \
+samba \
+ufw
+</code></pre>
+
+    <p>Install Node.js (for React):</p>
+
+    <pre><code class="language-bash">curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install -y nodejs
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 8 — MYSQL CONFIGURATION</h1>
+
+    <hr>
+
+    <h2>8.1 Install MySQL Server</h2>
+
+    <pre><code class="language-bash">sudo apt update
+sudo apt install mysql-server -y
+</code></pre>
+
+    <p>Check status:</p>
+
+    <pre><code class="language-bash">sudo systemctl status mysql
+</code></pre>
+
+    <hr>
+
+    <h2>8.2 Basic MySQL Security Setup</h2>
+
+    <pre><code class="language-bash">sudo mysql_secure_installation
+</code></pre>
+
+    <p>Choose:</p>
+
+    <pre><code>VALIDATE PASSWORD COMPONENT?  No
+Set root password?           Yes
+Remove anonymous users?      Yes
+Disallow root login remotely? Yes
+Remove test database?        Yes
+Reload privilege tables?     Yes
+</code></pre>
+
+    <hr>
+
+    <h2>8.3 Login as Root (Local Only)</h2>
+
+    <pre><code class="language-bash">sudo mysql -u root -p
+</code></pre>
+
+    <hr>
+
+    <h2>8.4 Create Application User (No Database)</h2>
+
+    <pre><code class="language-sql">CREATE USER 'devadmin'@'%' IDENTIFIED BY 'Dev@123';
+</code></pre>
+
+    <hr>
+
+    <h2>8.5 Grant Permissions (Application Creates DB)</h2>
+
+    <pre><code class="language-sql">GRANT CREATE, ALTER, DROP, INDEX, SELECT, INSERT, UPDATE, DELETE
+ON *.* TO 'devadmin'@'%';
+
+FLUSH PRIVILEGES;
+EXIT;
+</code></pre>
+
+    <hr>
+
+    <h2>8.6 Allow MySQL to Accept LAN Connections</h2>
+
+    <p>Edit MySQL config:</p>
+
+    <pre><code class="language-bash">sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+
+    <p>Set:</p>
+
+    <pre><code>bind-address = 0.0.0.0
+</code></pre>
+
+    <p>Restart MySQL:</p>
+
+    <pre><code class="language-bash">sudo systemctl restart mysql
+</code></pre>
+
+    <hr>
+
+    <h2>8.7 Connect Using MySQL Workbench (Windows GUI)</h2>
+
+    <h3>On Your Windows PC</h3>
+
+    <ol>
+        <li>Install <strong>MySQL Workbench</strong></li>
+        <li>Open <strong>MySQL Workbench</strong></li>
+        <li>Click <strong>➕ New Connection</strong></li>
+    </ol>
+
+    <h3>Enter the Following Details</h3>
+
+    <pre><code>Connection Name : Dev_Server
+Hostname        : 192.168.5.25
+Port            : 3306
+Username        : devadmin
+Password        : Dev@123
+</code></pre>
+
+    <ol start="4">
+        <li>Click <strong>Test Connection</strong></li>
+        <li>Save the connection</li>
+    </ol>
+
+    <hr>
+
+    <h1>🔹 STEP 9 — CREATE PROJECT STRUCTURE</h1>
+
+    <pre><code class="language-bash">sudo mkdir -p /srv/dev/{php,flask,django}
+sudo chown -R devadmin:www-data /srv/dev
+sudo chmod -R 775 /srv/dev
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 10 — CONFIGURE STORAGE SERVER (SAMBA)</h1>
+
+    <h3>Edit Samba config</h3>
+
+    <pre><code class="language-bash">sudo nano /etc/samba/smb.conf
+</code></pre>
+
+    <p>Add at the bottom:</p>
+
+    <pre><code class="language-ini">[dev]
+path = /srv/dev
+browseable = yes
+writable = yes
+create mask = 0775
+directory mask = 0775
+valid users = devadmin
+</code></pre>
+
+    <p>Set Samba password:</p>
+
+    <pre><code class="language-bash">sudo smbpasswd -a devadmin
+</code></pre>
+
+    <p>Restart Samba:</p>
+
+    <pre><code class="language-bash">sudo systemctl restart smbd
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 11 — MAP STORAGE AS DRIVE IN WINDOWS</h1>
+
+    <h3>On Windows PC:</h3>
+
+    <ol>
+        <li>Open <strong>File Explorer</strong></li>
+        <li>Right-click <strong>This PC → Map network drive</strong></li>
+        <li>Choose drive letter (example <strong>Z:</strong>)</li>
+        <li>Folder:</li>
+    </ol>
+
+    <pre><code>\\192.168.5.25\dev
+</code></pre>
+
+    <ol start="5">
+        <li>Check:
+            <ul>
+                <li>☑ Reconnect at sign-in</li>
+            </ul>
+        </li>
+        <li>Enter credentials:
+            <ul>
+                <li>Username: <code>devadmin</code></li>
+                <li>Password: Dev@123</li>
+            </ul>
+        </li>
+    </ol>
+
+    <p>✅ Storage now appears as drive <strong>Z:</strong></p>
+
+    <hr>
+
+    <h1>🔹 STEP 12 — PHP PROJECTS (DEV)</h1>
+
+    <h3>Example PHP project</h3>
+
+    <p>Create folder:</p>
+
+    <pre><code>Z:\php\project1
+</code></pre>
+
+    <p>Create <code>index.php</code>:</p>
+
+    <pre><code class="language-php">&lt;?php
+echo "PHP Project 1 working";
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 13 — FLASK PROJECTS (DEV)</h1>
+
+    <h3>Flask API</h3>
+
+    <pre><code class="language-bash">cd /srv/dev/flask
+mkdir convex_msql
+cd convex_msql
+python3 -m venv venv
+source venv/bin/activate
+pip install flask gunicorn
+</code></pre>
+
+    <p>Create <code>app.py</code>:</p>
+
+    <pre><code class="language-python">from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Flask API working"
+</code></pre>
+
+    <p>Run:</p>
+
+    <pre><code class="language-bash">tmux new -s gunicorn-dev
+cd /srv/dev/flask/convex_msql
+source venv/bin/activate
+gunicorn -b 127.0.0.1:5001 app:app --reload
+Detach from tmux (IMPORTANT)Press: Ctrl + B, then D
+Reattach later : tmux attach -t gunicorn-dev
+kill session : tmux kill-session -t gunicorn-dev
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 14 — DJANGO PROJECTS (DEV)</h1>
+
+    <pre><code class="language-bash">cd /srv/dev/django
+mkdir shop
+cd shop
+python3 -m venv venv
+source venv/bin/activate
+pip install django gunicorn
+django-admin startproject mysite .
+</code></pre>
+
+    <p>Run:</p>
+
+    <pre><code class="language-bash">tmux new -s gunicorn-dev
+cd /srv/dev/flask/convex_msql
+source venv/bin/activate
+gunicorn mysite.wsgi:application -b 127.0.0.1:8001 --reload
+Detach from tmux (IMPORTANT)Press: Ctrl + B, then D
+Reattach later : tmux attach -t gunicorn-dev
+kill session : tmux kill-session -t gunicorn-dev
+</code></pre>
+
+    <hr>
+
+    <h1>🔹 STEP 15 — NGINX CONFIG (PATH-BASED ROUTING)</h1>
+
+    <pre><code class="language-bash">sudo nano /etc/nginx/sites-available/dev
+</code></pre>
+
+    <p>script:</p>
+
+    <pre><code class="language-nginx">server {
+    listen 80 default_server;
+    server_name _;
+
+    root /srv/dev/php;
+    index index.php index.html;
+
+    # Allow directory index resolution
+    location / {
+        try_files $uri $uri/ $uri/index.php =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+
+   location /convex_msql/ {
+        proxy_pass http://127.0.0.1:5001/;
+        include proxy_params;
+    }
+    # add config for every new flask,django,react,node applications and restart the nginx
+
+  
+}
+
+</code></pre>
+
+    <p>restart nginx:</p>
+
+    <pre><code class="language-bash">sudo nginx -t
+sudo systemctl restart nginx
+</code></pre>
+
+    <hr>
+
+    <h1>✅ STEP 16 — ACCESS FROM WINDOWS (FINAL)</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th align="left">Project</th>
+                <th align="left">URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="left">PHP</td>
+                <td align="left"><code>http://192.168.5.25/project1</code></td>
+            </tr>
+            <tr>
+                <td align="left">Flask</td>
+                <td align="left"><code>http://192.168.5.25/convex_msql/</code></td>
+            </tr>
+            <tr>
+                <td align="left">Django</td>
+                <td align="left"><code>http://192.168.5.25/shop/</code></td>
+            </tr>
+            <tr>
+                <td align="left">Storage</td>
+                <td align="left"><code>Z:\</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h1>✅ DAILY WORKFLOW (IMPORTANT)</h1>
+
+    <ol>
+        <li>Open <strong>Z:</strong> on Windows</li>
+        <li>Edit files in VS Code</li>
+        <li>Flask/Django auto-reload</li>
+        <li>Refresh browser</li>
+        <li>Done</li>
+    </ol>
+
+    <p>No uploads.<br>
+        No physical server access.</p>
+
+    <hr>
+
+    <h1>🧠 NOTES (READ)</h1>
+
+    <ul>
+        <li>Always use <strong>trailing slash</strong> for Flask/Django paths</li>
+        <li>One project = one Gunicorn port</li>
+        <li>Dev server only (not production)</li>
+    </ul>
+
+    <hr>
+
+</body>
+
+</html>

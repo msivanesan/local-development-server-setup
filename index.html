@@ -128,18 +128,184 @@
             color: #735c0f;
             margin-bottom: 16px;
         }
+
+        /* Documentation Navigation */
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #0366d6;
+        }
+
+        body {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            background-color: #f6f8fa;
+            border-right: 1px solid #eaecef;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 4rem;
+            max-width: 900px;
+        }
+
+        .sidebar h3 {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            color: #586069;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 0.5rem;
+            color: #24292e;
+            text-decoration: none;
+            font-size: 0.9em;
+            border-radius: 6px;
+            transition: background 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar a:hover {
+            background-color: #e1e4e8;
+            color: var(--primary-color);
+        }
+
+        .sidebar a.active {
+            background-color: #fff;
+            color: var(--primary-color);
+            border: 1px solid #eaecef;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1100px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #eaecef;
+            }
+
+            .sidebar a {
+                white-space: normal;
+            }
+
+            .main-content {
+                padding: 2rem;
+            }
+        }
+
+        /* Copy Button Styles */
+        .code-container {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            font-size: 12px;
+            background-color: #fff;
+            border: 1px solid #dfe2e5;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, background-color 0.2s;
+            z-index: 10;
+        }
+
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background-color: #f6f8fa;
+            border-color: #0366d6;
+            color: #0366d6;
+        }
+
+        .copy-btn.copied {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        [contenteditable]:focus {
+            outline: 2px solid #0366d6;
+            border-radius: 3px;
+        }
     </style>
 </head>
 
-<body>
+<nav class="sidebar">
+    <h3>Documentation</h3>
+    <ul>
+        <li><a href="#top">📘 Home</a></li>
+        <li><a href="#credentials">🔑 Credentials</a></li>
+        <li><a href="#overview">🧱 Overview</a></li>
+        <li><a href="#step1">🔹 Step 1 — OS</a></li>
+        <li><a href="#step2">🔹 Step 2 — USB</a></li>
+        <li><a href="#step3">🔹 Step 3 — Install</a></li>
+        <li><a href="#step4">🔹 Step 4 — Update</a></li>
+        <li><a href="#step5">🔹 Step 5 — Static IP</a></li>
+        <li><a href="#step6">🔹 Step 6 — Remote</a></li>
+        <li><a href="#step7">🔹 Step 7 — Software</a></li>
+        <li><a href="#step8">🔹 Step 8 — MySQL</a></li>
+        <li><a href="#step9">🔹 Step 9 — Project Structure</a></li>
+        <li><a href="#step10">🔹 Step 10 — Samba</a></li>
+        <li><a href="#step11">🔹 Step 11 — Map Drive</a></li>
+        <li><a href="#step12">🔹 Step 12 — PHP Projects</a></li>
+        <li><a href="#step13">🔹 Step 13 — Flask Projects</a></li>
+        <li><a href="#step14">🔹 Step 14 — Django Projects</a></li>
+        <li><a href="#step15">🔹 Step 15 — Nginx Config</a></li>
+        <li><a href="#step16">📌 Step 16 — Access</a></li>
+        <li><a href="#production">🚀 Step 17 — Production</a></li>
+        <li><a href="#workflow">⚠️ Daily Workflow</a></li>
+        <li><a href="#notes">🧠 Notes</a></li>
+    </ul>
+</nav>
 
-    <h1>📘 COMPLETE DOCUMENTATION</h1>
+<div class="main-content">
+
+    <h1 id="top">📘 COMPLETE DOCUMENTATION</h1>
 
     <h2>LAN DEVELOPMENT SERVER (PHP + Flask + Django + Storage)</h2>
 
     <hr>
 
-    <h1>🔑 CREDENTIALS OVERVIEW</h1>
+    <h1 id="credentials">🔑 CREDENTIALS OVERVIEW</h1>
 
     <table>
         <thead>
@@ -184,7 +350,7 @@
 
     <hr>
 
-    <h1>🧱 OVERVIEW (FINAL RESULT)</h1>
+    <h1 id="overview">🧱 OVERVIEW (FINAL RESULT)</h1>
 
     <p>After completing this guide:</p>
 
@@ -197,8 +363,8 @@
         <li>URLs look like:</li>
     </ul>
 
-    <pre><code>http://192.168.5.25/project1
-http://192.168.5.25/convex_msql
+    <pre><code>http://192.168.5.25/trackerbi
+http://192.168.5.25/dataweave
 http://192.168.5.25/shop
 </code></pre>
 
@@ -218,7 +384,7 @@ Z:\django
 
     <hr>
 
-    <h1>🔹 STEP 1 — DOWNLOAD OPERATING SYSTEM</h1>
+    <h1 id="step1">🔹 STEP 1 — DOWNLOAD OPERATING SYSTEM</h1>
 
     <h2>Download</h2>
 
@@ -227,7 +393,7 @@ Z:\django
 
     <hr>
 
-    <h1>🔹 STEP 2 — CREATE BOOTABLE USB (WINDOWS)</h1>
+    <h1 id="step2">🔹 STEP 2 — CREATE BOOTABLE USB (WINDOWS)</h1>
 
     <ol>
         <li>Download <strong>Rufus</strong></li>
@@ -245,7 +411,7 @@ Z:\django
 
     <hr>
 
-    <h1>🔹 STEP 3 — INSTALL UBUNTU SERVER</h1>
+    <h1 id="step3">🔹 STEP 3 — INSTALL UBUNTU SERVER</h1>
 
     <ol>
         <li>Boot PC from USB</li>
@@ -275,7 +441,7 @@ Choose a password: Dev@123
 
     <hr>
 
-    <h1>🔹 STEP 4 — UPDATE SYSTEM</h1>
+    <h1 id="step4">🔹 STEP 4 — UPDATE SYSTEM</h1>
 
     <p>Open Terminal:</p>
 
@@ -284,7 +450,7 @@ Choose a password: Dev@123
 
     <hr>
 
-    <h1>🔹 STEP 5 — SET STATIC IP (CRITICAL)</h1>
+    <h1 id="step5">🔹 STEP 5 — SET STATIC IP (CRITICAL)</h1>
 
     <h3>Find network interface</h3>
 
@@ -325,7 +491,7 @@ Choose a password: Dev@123
 
     <hr>
 
-    <h1>🔹 STEP 6 — CONFIGURE REMOTE ACCESS (SSH + XRDP)</h1>
+    <h1 id="step6">🔹 STEP 6 — CONFIGURE REMOTE ACCESS (SSH + XRDP)</h1>
 
     <h2>📌 Environment</h2>
 
@@ -374,7 +540,8 @@ sudo systemctl start ssh
 
     <p>Example:</p>
 
-    <pre><code class="language-bash">ssh devuser@192.168.5.25
+    <pre><code class="language-bash">ssh devuser@192.168.5.25 or
+ssh devadmin@192.168.5.25
 </code></pre>
 
     <hr>
@@ -441,7 +608,7 @@ sudo systemctl restart xrdp
     <ol>
         <li>Press Win + R</li>
         <li>Type mstsc</li>
-        <li>Computer: SERVER_IP</li>
+        <li>Computer: 192.168.5.25</li>
         <li>Click Connect</li>
     </ol>
 
@@ -449,7 +616,7 @@ sudo systemctl restart xrdp
 
     <p>Session: Xorg<br>
         Username: devuser<br>
-        Password: user password</p>
+        Password: Dev@123</p>
 
     <p>✅ XFCE desktop will load.</p>
 
@@ -614,11 +781,11 @@ ClientAliveCountMax 0
 
     <hr>
 
-    <h1>🔹 STEP 7 — INSTALL REQUIRED SOFTWARE</h1>
+    <h1 id="step7">🔹 STEP 7 — INSTALL REQUIRED SOFTWARE</h1>
 
     <pre><code class="language-bash">sudo apt install -y \
 nginx \
-php php-fpm \
+php php-fpm php-mysql \
 python3 python3-pip python3-venv \
 git curl \
 samba \
@@ -633,7 +800,7 @@ sudo apt install -y nodejs
 
     <hr>
 
-    <h1>🔹 STEP 8 — MYSQL CONFIGURATION</h1>
+    <h1 id="step8">🔹 STEP 8 — MYSQL CONFIGURATION</h1>
 
     <hr>
 
@@ -683,7 +850,10 @@ Reload privilege tables?     Yes
 
     <h2>8.5 Grant Permissions (Application Creates DB)</h2>
 
-    <pre><code class="language-sql">GRANT CREATE, ALTER, DROP, INDEX, SELECT, INSERT, UPDATE, DELETE
+    <pre><code class="language-sql">GRANT CREATE, ALTER, DROP, INDEX,
+  SELECT, INSERT, UPDATE, DELETE,
+  LOCK TABLES,
+  PROCESS
 ON *.* TO 'devadmin'@'%';
 
 FLUSH PRIVILEGES;
@@ -707,6 +877,15 @@ EXIT;
     <p>Restart MySQL:</p>
 
     <pre><code class="language-bash">sudo systemctl restart mysql
+</code></pre>
+
+    <hr>
+
+    <h2> After installing MySQL locally — how to check how much storage (GB/MB) databases are using</h2>
+
+    <pre><code class="language-bash">sudo mysql -u root -p
+</code></pre>
+  <pre><code class="language-bash">sudo ncdu /var/lib/mysql
 </code></pre>
 
     <hr>
@@ -737,7 +916,7 @@ Password        : Dev@123
 
     <hr>
 
-    <h1>🔹 STEP 9 — CREATE PROJECT STRUCTURE</h1>
+    <h1 id="step9">🔹 STEP 9 — CREATE PROJECT STRUCTURE</h1>
 
     <pre><code class="language-bash">sudo mkdir -p /srv/dev/{php,flask,django}
 sudo chown -R devadmin:www-data /srv/dev
@@ -746,7 +925,7 @@ sudo chmod -R 775 /srv/dev
 
     <hr>
 
-    <h1>🔹 STEP 10 — CONFIGURE STORAGE SERVER (SAMBA)</h1>
+    <h1 id="step10">🔹 STEP 10 — CONFIGURE STORAGE SERVER (SAMBA)</h1>
 
     <h3>Edit Samba config</h3>
 
@@ -776,7 +955,7 @@ valid users = devadmin
 
     <hr>
 
-    <h1>🔹 STEP 11 — MAP STORAGE AS DRIVE IN WINDOWS</h1>
+    <h1 id="step11">🔹 STEP 11 — MAP STORAGE AS DRIVE IN WINDOWS</h1>
 
     <h3>On Windows PC:</h3>
 
@@ -803,12 +982,27 @@ valid users = devadmin
             </ul>
         </li>
     </ol>
+     <p>✅ Storage now appears as drive <strong>Z:</strong></p>
 
-    <p>✅ Storage now appears as drive <strong>Z:</strong></p>
+      <h3>when you missed mount password or reset the password<h3>
+      
+            <ul>
+                  </pre>
+                 <pre><code> sudo smbpasswd kalyan
+</code></pre>
+            </ul>
+            <ul>
+                <li>New SMB password:</li>
+<li>Retype new SMB password:</li>
+<li> sudo systemctl restart  </li>
+            </ul>
+        </li>
+
+   
 
     <hr>
 
-    <h1>🔹 STEP 12 — PHP PROJECTS (DEV)</h1>
+    <h1 id="step12">🔹 STEP 12 — PHP PROJECTS (DEV)</h1>
 
     <h3>Example PHP project</h3>
 
@@ -825,17 +1019,22 @@ echo "PHP Project 1 working";
 
     <hr>
 
-    <h1>🔹 STEP 13 — FLASK PROJECTS (DEV)</h1>
+    <h1 id="step13">🔹 STEP 13 — FLASK PROJECTS (DEV)</h1>
 
     <h3>Flask API</h3>
 
     <pre><code class="language-bash">cd /srv/dev/flask
-mkdir convex_msql
-cd convex_msql
+mkdir dataweave
+cd dataweave
 python3 -m venv venv
-source venv/bin/activate
-pip install flask gunicorn
-</code></pre>
+source venv/bin/activate</code></pre>
+
+    <p><strong>Option A: Standard Theme</strong> (HTTP only)</p>
+    <pre><code class="language-bash">pip install flask gunicorn</code></pre>
+
+    <p><strong>Option B: WebSocket Theme</strong> (With SocketIO Support)</p>
+    <pre><code class="language-bash">pip install flask gunicorn flask-socketio eventlet</code></pre>
+
 
     <p>Create <code>app.py</code>:</p>
 
@@ -850,17 +1049,26 @@ def home():
     <p>Run:</p>
 
     <pre><code class="language-bash">tmux new -s gunicorn-dev
-cd /srv/dev/flask/convex_msql
-source venv/bin/activate
-gunicorn -b 127.0.0.1:5001 app:app --reload
-Detach from tmux (IMPORTANT)Press: Ctrl + B, then D
-Reattach later : tmux attach -t gunicorn-dev
-kill session : tmux kill-session -t gunicorn-dev
+cd /srv/dev/flask/dataweave
+source venv/bin/activate</code></pre>
+
+    <p><strong>Option A: Standard Theme Run</strong></p>
+    <pre><code class="language-bash">gunicorn -b 127.0.0.1:5001 app:app --reload</code></pre>
+
+    <p><strong>Option B: WebSocket Theme Run (Eventlet)</strong></p>
+    <pre><code class="language-bash">gunicorn --worker-class eventlet -w 1 -b 127.0.0.1:5001 app:app --reload</code></pre>
+
+    <p><em>Detach from tmux: Press <strong>Ctrl + B</strong>, then <strong>D</strong></em></p>
+
+    <pre><code class="language-bash"># Management commands
+tmux attach -t gunicorn-dev    # Reattach
+tmux kill-session -t gunicorn-dev # Stop
 </code></pre>
+
 
     <hr>
 
-    <h1>🔹 STEP 14 — DJANGO PROJECTS (DEV)</h1>
+    <h1 id="step14">🔹 STEP 14 — DJANGO PROJECTS (DEV)</h1>
 
     <pre><code class="language-bash">cd /srv/dev/django
 mkdir shop
@@ -874,7 +1082,7 @@ django-admin startproject mysite .
     <p>Run:</p>
 
     <pre><code class="language-bash">tmux new -s gunicorn-dev
-cd /srv/dev/flask/convex_msql
+cd /srv/dev/flask/dataweave
 source venv/bin/activate
 gunicorn mysite.wsgi:application -b 127.0.0.1:8001 --reload
 Detach from tmux (IMPORTANT)Press: Ctrl + B, then D
@@ -884,7 +1092,7 @@ kill session : tmux kill-session -t gunicorn-dev
 
     <hr>
 
-    <h1>🔹 STEP 15 — NGINX CONFIG (PATH-BASED ROUTING)</h1>
+    <h1 id="step15">🔹 STEP 15 — NGINX CONFIG (PATH-BASED ROUTING)</h1>
 
     <pre><code class="language-bash">sudo nano /etc/nginx/sites-available/dev
 </code></pre>
@@ -908,9 +1116,14 @@ kill session : tmux kill-session -t gunicorn-dev
         fastcgi_pass unix:/run/php/php8.3-fpm.sock;
     }
 
-   location /convex_msql/ {
+   location /dataweave/ {
         proxy_pass http://127.0.0.1:5001/;
         include proxy_params;
+        
+        # --- WebSocket Support (Safe for Standard HTTP too) ---
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
     }
     # add config for every new flask,django,react,node applications and restart the nginx
 
@@ -927,7 +1140,7 @@ sudo systemctl restart nginx
 
     <hr>
 
-    <h1>✅ STEP 16 — ACCESS FROM WINDOWS (FINAL)</h1>
+    <h1 id="step16">📌 STEP 16 — ACCESS FROM WINDOWS (FINAL)</h1>
 
     <table>
         <thead>
@@ -943,7 +1156,7 @@ sudo systemctl restart nginx
             </tr>
             <tr>
                 <td align="left">Flask</td>
-                <td align="left"><code>http://192.168.5.25/convex_msql/</code></td>
+                <td align="left"><code>http://192.168.5.25/dataweave/</code></td>
             </tr>
             <tr>
                 <td align="left">Django</td>
@@ -958,7 +1171,74 @@ sudo systemctl restart nginx
 
     <hr>
 
-    <h1>✅ DAILY WORKFLOW (IMPORTANT)</h1>
+    <hr>
+
+    <h1 id="production">🚀 STEP 17 — PRODUCTION DEPLOYMENT (SYSTEMD SERVICE)</h1>
+
+    <p>For production, instead of running Gunicorn in a <code>tmux</code> session, use a <strong>systemd
+            service</strong> to ensure it starts on boot and restarts if it crashes.</p>
+
+    <h3>1. Create the Service File</h3>
+
+    <pre><code class="language-bash">sudo nano /etc/systemd/system/gunicorn-flask.service
+</code></pre>
+
+    <h3>2. Paste Configuration</h3>
+
+    <pre><code class="language-ini">[Unit]
+Description=Gunicorn instance to serve Flask app
+After=network.target
+
+[Service]
+User=devadmin
+Group=devadmin
+WorkingDirectory=/srv/dev/flask/dataweave
+Environment="PATH=/srv/dev/flask/dataweave/venv/bin"
+# Standard ExecStart
+ExecStart=/srv/dev/flask/dataweave/venv/bin/gunicorn -b 127.0.0.1:5001 app:app
+
+# WebSocket ExecStart (Eventlet)
+# ExecStart=/srv/dev/flask/dataweave/venv/bin/gunicorn --worker-class eventlet -w 1 -b 127.0.0.1:5001 app:app
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+    <h3>3. Enable and Start Service</h3>
+
+    <pre><code class="language-bash">sudo systemctl daemon-reload
+sudo systemctl enable gunicorn-flask.service
+sudo systemctl start gunicorn-flask.service
+</code></pre>
+
+    <h3>4. Management Commands</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th align="left">Action</th>
+                <th align="left">Command</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="left">Check Status</td>
+                <td align="left"><code>sudo systemctl status gunicorn-flask.service</code></td>
+            </tr>
+            <tr>
+                <td align="left">Restart</td>
+                <td align="left"><code>sudo systemctl restart gunicorn-flask.service</code></td>
+            </tr>
+            <tr>
+                <td align="left">View Logs</td>
+                <td align="left"><code>journalctl -u gunicorn-flask.service</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h1 id="workflow">⚠️ DAILY WORKFLOW (IMPORTANT)</h1>
 
     <ol>
         <li>Open <strong>Z:</strong> on Windows</li>
@@ -973,7 +1253,7 @@ sudo systemctl restart nginx
 
     <hr>
 
-    <h1>🧠 NOTES (READ)</h1>
+    <h1 id="notes">🧠 NOTES (READ)</h1>
 
     <ul>
         <li>Always use <strong>trailing slash</strong> for Flask/Django paths</li>
@@ -983,6 +1263,104 @@ sudo systemctl restart nginx
 
     <hr>
 
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    document.querySelectorAll('.sidebar a').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Intersection Observer for active link
+        document.querySelectorAll('h1[id]').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Make code blocks editable and add copy buttons
+        document.querySelectorAll('pre').forEach(pre => {
+            // Wrap pre in a container for positioning the button
+            const container = document.createElement('div');
+            container.className = 'code-container';
+            pre.parentNode.insertBefore(container, pre);
+            container.appendChild(pre);
+
+            const code = pre.querySelector('code');
+            if (code) {
+                // Make editable
+                code.setAttribute('contenteditable', 'true');
+                code.setAttribute('spellcheck', 'false');
+
+                // Add copy button
+                const button = document.createElement('button');
+                button.className = 'copy-btn';
+                button.innerText = 'Copy';
+                container.appendChild(button);
+
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Get clean text (ignoring potential HTML formatting from contenteditable)
+                    const text = code.innerText || code.textContent;
+                    
+                    // Clipboard API with fallback
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            showSuccess();
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                            fallbackCopy(text);
+                        });
+                    } else {
+                        fallbackCopy(text);
+                    }
+
+                    function showSuccess() {
+                        button.innerText = 'Copied!';
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.innerText = 'Copy';
+                            button.classList.remove('copied');
+                        }, 2000);
+                    }
+
+                    function fallbackCopy(textToCopy) {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = textToCopy;
+                        // Avoid scrolling to bottom
+                        textArea.style.top = "0";
+                        textArea.style.left = "0";
+                        textArea.style.position = "fixed";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {
+                            const successful = document.execCommand('copy');
+                            if (successful) showSuccess();
+                        } catch (err) {
+                            console.error('Fallback copy failed', err);
+                        }
+                        document.body.removeChild(textArea);
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

@@ -10,10 +10,12 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             line-height: 1.6;
             color: #24292e;
-            max-width: 900px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0;
             background-color: #ffffff;
+            display: flex;
+            scroll-behavior: smooth;
         }
 
         h1,
@@ -72,10 +74,19 @@
             font-size: 100%;
         }
 
+        /* Responsive Table Wrapper */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-bottom: 16px;
+            min-width: 600px;
+            /* Ensures tables don't squish too much */
         }
 
         table th,
@@ -97,8 +108,10 @@
 
         img {
             max-width: 100%;
-            box-sizing: content-box;
-            background-color: #fff;
+            height: auto;
+            display: block;
+            margin: 1rem 0;
+            border-radius: 6px;
         }
 
         hr {
@@ -121,7 +134,7 @@
         }
 
         .warning {
-            padding: 8px 16px;
+            padding: 12px 16px;
             background-color: #fff5b1;
             border: 1px solid #e2c08d;
             border-radius: 6px;
@@ -129,18 +142,10 @@
             margin-bottom: 16px;
         }
 
-        /* Documentation Navigation */
         :root {
             --sidebar-width: 280px;
             --primary-color: #0366d6;
-        }
-
-        body {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0;
-            scroll-behavior: smooth;
+            --sidebar-bg: #f6f8fa;
         }
 
         .sidebar {
@@ -148,17 +153,20 @@
             height: 100vh;
             position: sticky;
             top: 0;
-            background-color: #f6f8fa;
+            background-color: var(--sidebar-bg);
             border-right: 1px solid #eaecef;
             padding: 2rem 1rem;
             overflow-y: auto;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
         }
 
         .main-content {
             flex-grow: 1;
             padding: 2rem 4rem;
-            max-width: 900px;
+            max-width: 100%;
+            min-width: 0;
+            /* Prevents flex children from overflowing */
         }
 
         .sidebar h3 {
@@ -186,7 +194,7 @@
             text-decoration: none;
             font-size: 0.9em;
             border-radius: 6px;
-            transition: background 0.2s;
+            transition: all 0.2s;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -204,25 +212,83 @@
             font-weight: 600;
         }
 
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 24px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(2px);
+        }
+
         @media (max-width: 1100px) {
-            body {
-                flex-direction: column;
+            .main-content {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
             }
 
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid #eaecef;
+                position: fixed;
+                left: 0;
+                top: 0;
+                transform: translateX(-100%);
+                z-index: 1000;
+                width: 260px;
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar.open+.sidebar-overlay {
+                display: block;
+            }
+
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.75em;
+            }
+
+            h2 {
+                font-size: 1.3em;
             }
 
             .sidebar a {
                 white-space: normal;
-            }
-
-            .main-content {
-                padding: 2rem;
+                padding: 0.75rem 0.5rem;
             }
         }
 
@@ -267,9 +333,13 @@
             border-radius: 3px;
         }
     </style>
+
 </head>
 
-<nav class="sidebar">
+<button id="menu-toggle" class="menu-toggle" aria-label="Toggle Menu">☰</button>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<nav class="sidebar" id="sidebar">
     <h3>Documentation</h3>
     <ul>
         <li><a href="#top">📘 Home</a></li>
@@ -283,6 +353,7 @@
         <li><a href="#step6">🔹 Step 6 — Remote</a></li>
         <li><a href="#step7">🔹 Step 7 — Software</a></li>
         <li><a href="#step8">🔹 Step 8 — MySQL</a></li>
+        <li><a href="#step8_backup">🔹 Step 8.8 — Backup</a></li>
         <li><a href="#step9">🔹 Step 9 — Project Structure</a></li>
         <li><a href="#step10">🔹 Step 10 — Samba</a></li>
         <li><a href="#step11">🔹 Step 11 — Map Drive</a></li>
@@ -292,6 +363,7 @@
         <li><a href="#step15">🔹 Step 15 — Nginx Config</a></li>
         <li><a href="#step16">📌 Step 16 — Access</a></li>
         <li><a href="#production">🚀 Step 17 — Production</a></li>
+        <li><a href="#step18">🖥️ Step 18 — Monitor Resize</a></li>
         <li><a href="#workflow">⚠️ Daily Workflow</a></li>
         <li><a href="#notes">🧠 Notes</a></li>
     </ul>
@@ -885,7 +957,7 @@ EXIT;
 
     <pre><code class="language-bash">sudo mysql -u root -p
 </code></pre>
-  <pre><code class="language-bash">sudo ncdu /var/lib/mysql
+    <pre><code class="language-bash">sudo ncdu /var/lib/mysql
 </code></pre>
 
     <hr>
@@ -913,6 +985,106 @@ Password        : Dev@123
         <li>Click <strong>Test Connection</strong></li>
         <li>Save the connection</li>
     </ol>
+
+    <hr>
+
+    <h2 id="step8_backup">8.8 MySQL Daily Backup Setup (Linux Server)</h2>
+
+    <h3>Overview</h3>
+    <p>This guide explains how to automatically back up a MySQL database every day on a Linux server using
+        <code>mysqldump</code>, a bash backup script, and <code>cron</code> scheduler.
+    </p>
+    <p>The backup will:</p>
+    <ul>
+        <li>Run every day at 2:00 AM</li>
+        <li>Compress the backup using <code>gzip</code></li>
+        <li>Store it in a backup folder</li>
+        <li>Automatically delete backups older than 30 days</li>
+    </ul>
+
+    <hr>
+
+    <h3>1. Create Backup Script</h3>
+    <p>Create a backup script:</p>
+    <pre><code class="language-bash">nano /home/mysql_backup.sh</code></pre>
+    <p>Paste the following script:</p>
+    <pre><code class="language-bash">#!/bin/bash
+
+DATE=$(date +%F)
+BACKUP_DIR=/home/ps/mysql_backup
+DATABASE_NAME=trackerbi
+
+mkdir -p $BACKUP_DIR
+
+sudo mysqldump $DATABASE_NAME | gzip > $BACKUP_DIR/$DATABASE_NAME-$DATE.sql.gz
+
+find $BACKUP_DIR -type f -mtime +30 -delete</code></pre>
+
+    <hr>
+
+    <h3>2. Make Script Executable</h3>
+    <pre><code class="language-bash">chmod +x /home/mysql_backup.sh</code></pre>
+
+    <hr>
+
+    <h3>3. Test the Backup Script</h3>
+    <p>Run manually to confirm it works:</p>
+    <pre><code class="language-bash">/home/mysql_backup.sh</code></pre>
+    <p>Check backup files:</p>
+    <pre><code class="language-bash">ls /home/ps/mysql_backup</code></pre>
+    <p>Example output:</p>
+    <pre><code>trackerbi-2026-03-06.sql.gz</code></pre>
+
+    <hr>
+
+    <h3>4. Allow mysqldump Without Password</h3>
+    <p>Open sudo configuration:</p>
+    <pre><code class="language-bash">sudo visudo</code></pre>
+    <p>Add this line at the bottom:</p>
+    <pre><code>ps ALL=(ALL) NOPASSWD: /usr/bin/mysqldump</code></pre>
+    <p>This allows the user <code>ps</code> to run mysqldump without entering a password.</p>
+
+    <hr>
+
+    <h3>5. Schedule Automatic Backup</h3>
+    <p>Edit cron jobs:</p>
+    <pre><code class="language-bash">crontab -e</code></pre>
+    <p>Add the following line:</p>
+    <pre><code>0 2 * * * /home/mysql_backup.sh</code></pre>
+    <p>This runs the backup <strong>every day at 2:00 AM</strong>.</p>
+
+    <hr>
+
+    <h3>6. Verify Cron Job</h3>
+    <p>Check cron jobs:</p>
+    <pre><code class="language-bash">crontab -l</code></pre>
+    <p>Expected output:</p>
+    <pre><code>0 2 * * * /home/mysql_backup.sh</code></pre>
+
+    <hr>
+
+    <h3>7. Restore Database From Backup</h3>
+    <p>If data is lost, restore using:</p>
+    <pre><code class="language-bash">gunzip < trackerbi-2026-03-06.sql.gz | mysql trackerbi</code></pre>
+
+    <hr>
+
+    <h3>Backup Folder Example</h3>
+    <pre><code>/home/ps/mysql_backup/
+
+trackerbi-2026-03-06.sql.gz
+trackerbi-2026-03-05.sql.gz
+trackerbi-2026-03-04.sql.gz</code></pre>
+
+    <hr>
+
+    <h3>Best Practices</h3>
+    <ul>
+        <li>Keep at least <strong>30 days of backups</strong></li>
+        <li>Store backups on another server or cloud</li>
+        <li>Test restore periodically</li>
+        <li>Monitor backup size and disk space</li>
+    </ul>
 
     <hr>
 
@@ -982,63 +1154,63 @@ valid users = devadmin
             </ul>
         </li>
     </ol>
-     <p>✅ Storage now appears as drive <strong>Z:</strong></p>
+    <p>✅ Storage now appears as drive <strong>Z:</strong></p>
 
-      <h3>when you missed mount password or reset the password<h3>
-      
+    <h3>when you missed mount password or reset the password<h3>
+
             <ul>
-                  </pre>
-                 <pre><code> sudo smbpasswd kalyan
+                </pre>
+                <pre><code> sudo smbpasswd kalyan
 </code></pre>
             </ul>
             <ul>
                 <li>New SMB password:</li>
-<li>Retype new SMB password:</li>
-<li> sudo systemctl restart  </li>
+                <li>Retype new SMB password:</li>
+                <li> sudo systemctl restart </li>
             </ul>
-        </li>
+            </li>
 
-   
 
-    <hr>
 
-    <h1 id="step12">🔹 STEP 12 — PHP PROJECTS (DEV)</h1>
+            <hr>
 
-    <h3>Example PHP project</h3>
+            <h1 id="step12">🔹 STEP 12 — PHP PROJECTS (DEV)</h1>
 
-    <p>Create folder:</p>
+            <h3>Example PHP project</h3>
 
-    <pre><code>Z:\php\project1
+            <p>Create folder:</p>
+
+            <pre><code>Z:\php\project1
 </code></pre>
 
-    <p>Create <code>index.php</code>:</p>
+            <p>Create <code>index.php</code>:</p>
 
-    <pre><code class="language-php">&lt;?php
+            <pre><code class="language-php">&lt;?php
 echo "PHP Project 1 working";
 </code></pre>
 
-    <hr>
+            <hr>
 
-    <h1 id="step13">🔹 STEP 13 — FLASK PROJECTS (DEV)</h1>
+            <h1 id="step13">🔹 STEP 13 — FLASK PROJECTS (DEV)</h1>
 
-    <h3>Flask API</h3>
+            <h3>Flask API</h3>
 
-    <pre><code class="language-bash">cd /srv/dev/flask
+            <pre><code class="language-bash">cd /srv/dev/flask
 mkdir dataweave
 cd dataweave
 python3 -m venv venv
 source venv/bin/activate</code></pre>
 
-    <p><strong>Option A: Standard Theme</strong> (HTTP only)</p>
-    <pre><code class="language-bash">pip install flask gunicorn</code></pre>
+            <p><strong>Option A: Standard Theme</strong> (HTTP only)</p>
+            <pre><code class="language-bash">pip install flask gunicorn</code></pre>
 
-    <p><strong>Option B: WebSocket Theme</strong> (With SocketIO Support)</p>
-    <pre><code class="language-bash">pip install flask gunicorn flask-socketio eventlet</code></pre>
+            <p><strong>Option B: WebSocket Theme</strong> (With SocketIO Support)</p>
+            <pre><code class="language-bash">pip install flask gunicorn flask-socketio eventlet</code></pre>
 
 
-    <p>Create <code>app.py</code>:</p>
+            <p>Create <code>app.py</code>:</p>
 
-    <pre><code class="language-python">from flask import Flask
+            <pre><code class="language-python">from flask import Flask
 app = Flask(__name__)
 
 @app.route("/")
@@ -1046,31 +1218,31 @@ def home():
     return "Flask API working"
 </code></pre>
 
-    <p>Run:</p>
+            <p>Run:</p>
 
-    <pre><code class="language-bash">tmux new -s gunicorn-dev
+            <pre><code class="language-bash">tmux new -s gunicorn-dev
 cd /srv/dev/flask/dataweave
 source venv/bin/activate</code></pre>
 
-    <p><strong>Option A: Standard Theme Run</strong></p>
-    <pre><code class="language-bash">gunicorn -b 127.0.0.1:5001 app:app --reload</code></pre>
+            <p><strong>Option A: Standard Theme Run</strong></p>
+            <pre><code class="language-bash">gunicorn -b 127.0.0.1:5001 app:app --reload</code></pre>
 
-    <p><strong>Option B: WebSocket Theme Run (Eventlet)</strong></p>
-    <pre><code class="language-bash">gunicorn --worker-class eventlet -w 1 -b 127.0.0.1:5001 app:app --reload</code></pre>
+            <p><strong>Option B: WebSocket Theme Run (Eventlet)</strong></p>
+            <pre><code class="language-bash">gunicorn --worker-class eventlet -w 1 -b 127.0.0.1:5001 app:app --reload</code></pre>
 
-    <p><em>Detach from tmux: Press <strong>Ctrl + B</strong>, then <strong>D</strong></em></p>
+            <p><em>Detach from tmux: Press <strong>Ctrl + B</strong>, then <strong>D</strong></em></p>
 
-    <pre><code class="language-bash"># Management commands
+            <pre><code class="language-bash"># Management commands
 tmux attach -t gunicorn-dev    # Reattach
 tmux kill-session -t gunicorn-dev # Stop
 </code></pre>
 
 
-    <hr>
+            <hr>
 
-    <h1 id="step14">🔹 STEP 14 — DJANGO PROJECTS (DEV)</h1>
+            <h1 id="step14">🔹 STEP 14 — DJANGO PROJECTS (DEV)</h1>
 
-    <pre><code class="language-bash">cd /srv/dev/django
+            <pre><code class="language-bash">cd /srv/dev/django
 mkdir shop
 cd shop
 python3 -m venv venv
@@ -1079,9 +1251,9 @@ pip install django gunicorn
 django-admin startproject mysite .
 </code></pre>
 
-    <p>Run:</p>
+            <p>Run:</p>
 
-    <pre><code class="language-bash">tmux new -s gunicorn-dev
+            <pre><code class="language-bash">tmux new -s gunicorn-dev
 cd /srv/dev/flask/dataweave
 source venv/bin/activate
 gunicorn mysite.wsgi:application -b 127.0.0.1:8001 --reload
@@ -1090,16 +1262,16 @@ Reattach later : tmux attach -t gunicorn-dev
 kill session : tmux kill-session -t gunicorn-dev
 </code></pre>
 
-    <hr>
+            <hr>
 
-    <h1 id="step15">🔹 STEP 15 — NGINX CONFIG (PATH-BASED ROUTING)</h1>
+            <h1 id="step15">🔹 STEP 15 — NGINX CONFIG (PATH-BASED ROUTING)</h1>
 
-    <pre><code class="language-bash">sudo nano /etc/nginx/sites-available/dev
+            <pre><code class="language-bash">sudo nano /etc/nginx/sites-available/dev
 </code></pre>
 
-    <p>script:</p>
+            <p>script:</p>
 
-    <pre><code class="language-nginx">server {
+            <pre><code class="language-nginx">server {
     listen 80 default_server;
     server_name _;
 
@@ -1132,60 +1304,60 @@ kill session : tmux kill-session -t gunicorn-dev
 
 </code></pre>
 
-    <p>restart nginx:</p>
+            <p>restart nginx:</p>
 
-    <pre><code class="language-bash">sudo nginx -t
+            <pre><code class="language-bash">sudo nginx -t
 sudo systemctl restart nginx
 </code></pre>
 
-    <hr>
+            <hr>
 
-    <h1 id="step16">📌 STEP 16 — ACCESS FROM WINDOWS (FINAL)</h1>
+            <h1 id="step16">📌 STEP 16 — ACCESS FROM WINDOWS (FINAL)</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th align="left">Project</th>
-                <th align="left">URL</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td align="left">PHP</td>
-                <td align="left"><code>http://192.168.5.25/project1</code></td>
-            </tr>
-            <tr>
-                <td align="left">Flask</td>
-                <td align="left"><code>http://192.168.5.25/dataweave/</code></td>
-            </tr>
-            <tr>
-                <td align="left">Django</td>
-                <td align="left"><code>http://192.168.5.25/shop/</code></td>
-            </tr>
-            <tr>
-                <td align="left">Storage</td>
-                <td align="left"><code>Z:\</code></td>
-            </tr>
-        </tbody>
-    </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th align="left">Project</th>
+                        <th align="left">URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="left">PHP</td>
+                        <td align="left"><code>http://192.168.5.25/project1</code></td>
+                    </tr>
+                    <tr>
+                        <td align="left">Flask</td>
+                        <td align="left"><code>http://192.168.5.25/dataweave/</code></td>
+                    </tr>
+                    <tr>
+                        <td align="left">Django</td>
+                        <td align="left"><code>http://192.168.5.25/shop/</code></td>
+                    </tr>
+                    <tr>
+                        <td align="left">Storage</td>
+                        <td align="left"><code>Z:\</code></td>
+                    </tr>
+                </tbody>
+            </table>
 
-    <hr>
+            <hr>
 
-    <hr>
+            <hr>
 
-    <h1 id="production">🚀 STEP 17 — PRODUCTION DEPLOYMENT (SYSTEMD SERVICE)</h1>
+            <h1 id="production">🚀 STEP 17 — PRODUCTION DEPLOYMENT (SYSTEMD SERVICE)</h1>
 
-    <p>For production, instead of running Gunicorn in a <code>tmux</code> session, use a <strong>systemd
-            service</strong> to ensure it starts on boot and restarts if it crashes.</p>
+            <p>For production, instead of running Gunicorn in a <code>tmux</code> session, use a <strong>systemd
+                    service</strong> to ensure it starts on boot and restarts if it crashes.</p>
 
-    <h3>1. Create the Service File</h3>
+            <h3>1. Create the Service File</h3>
 
-    <pre><code class="language-bash">sudo nano /etc/systemd/system/gunicorn-flask.service
+            <pre><code class="language-bash">sudo nano /etc/systemd/system/gunicorn-flask.service
 </code></pre>
 
-    <h3>2. Paste Configuration</h3>
+            <h3>2. Paste Configuration</h3>
 
-    <pre><code class="language-ini">[Unit]
+            <pre><code class="language-ini">[Unit]
 Description=Gunicorn instance to serve Flask app
 After=network.target
 
@@ -1204,69 +1376,162 @@ ExecStart=/srv/dev/flask/dataweave/venv/bin/gunicorn -b 127.0.0.1:5001 app:app
 WantedBy=multi-user.target
 </code></pre>
 
-    <h3>3. Enable and Start Service</h3>
+            <h3>3. Enable and Start Service</h3>
 
-    <pre><code class="language-bash">sudo systemctl daemon-reload
+            <pre><code class="language-bash">sudo systemctl daemon-reload
 sudo systemctl enable gunicorn-flask.service
 sudo systemctl start gunicorn-flask.service
 </code></pre>
 
-    <h3>4. Management Commands</h3>
+            <h3>4. Management Commands</h3>
 
-    <table>
-        <thead>
-            <tr>
-                <th align="left">Action</th>
-                <th align="left">Command</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td align="left">Check Status</td>
-                <td align="left"><code>sudo systemctl status gunicorn-flask.service</code></td>
-            </tr>
-            <tr>
-                <td align="left">Restart</td>
-                <td align="left"><code>sudo systemctl restart gunicorn-flask.service</code></td>
-            </tr>
-            <tr>
-                <td align="left">View Logs</td>
-                <td align="left"><code>journalctl -u gunicorn-flask.service</code></td>
-            </tr>
-        </tbody>
-    </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th align="left">Action</th>
+                        <th align="left">Command</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="left">Check Status</td>
+                        <td align="left"><code>sudo systemctl status gunicorn-flask.service</code></td>
+                    </tr>
+                    <tr>
+                        <td align="left">Restart</td>
+                        <td align="left"><code>sudo systemctl restart gunicorn-flask.service</code></td>
+                    </tr>
+                    <tr>
+                        <td align="left">View Logs</td>
+                        <td align="left"><code>journalctl -u gunicorn-flask.service</code></td>
+                    </tr>
+                </tbody>
+            </table>
 
-    <hr>
+            <hr>
 
-    <h1 id="workflow">⚠️ DAILY WORKFLOW (IMPORTANT)</h1>
+            <h1 id="step18">🖥️ STEP 18 — MONITOR RESIZE — REAL FINAL SOLUTION (Force Kernel Video Mode)</h1>
 
-    <ol>
-        <li>Open <strong>Z:</strong> on Windows</li>
-        <li>Edit files in VS Code</li>
-        <li>Flask/Django auto-reload</li>
-        <li>Refresh browser</li>
-        <li>Done</li>
-    </ol>
+            <p>If your monitor resolution is stuck after reboot, force the kernel to use the correct video mode via
+                GRUB.</p>
 
-    <p>No uploads.<br>
-        No physical server access.</p>
+            <div class="warning">
+                <strong>⚠️ NOTE:</strong> Use <code>1680x1050</code> because <code>hwinfo</code> shows it is supported
+                on this machine. If your monitor is only 1080p, replace <code>1920x1440</code> with
+                <code>1920x1080</code>.
+            </div>
 
-    <hr>
+            <h3>1️⃣ Open GRUB config</h3>
 
-    <h1 id="notes">🧠 NOTES (READ)</h1>
+            <pre><code class="language-bash">sudo nano /etc/default/grub
+</code></pre>
 
-    <ul>
-        <li>Always use <strong>trailing slash</strong> for Flask/Django paths</li>
-        <li>One project = one Gunicorn port</li>
-        <li>Dev server only (not production)</li>
-    </ul>
+            <h3>2️⃣ Find This Line</h3>
 
-    <hr>
+            <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+</code></pre>
+
+            <p>Replace it with:</p>
+
+            <pre><code>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash video=1920x1440"
+</code></pre>
+
+            <h3>3️⃣ Save and Exit</h3>
+
+            <pre><code>CTRL + o
+        Enter
+ctrl + x
+
+</code></pre>
+
+            <h3>4️⃣ Update GRUB</h3>
+
+            <pre><code class="language-bash">sudo update-grub
+</code></pre>
+
+            <h3>5️⃣ Reboot</h3>
+
+            <pre><code class="language-bash">sudo reboot
+</code></pre>
+
+            <h3>✅ After Reboot — Verify</h3>
+
+            <p>Run:</p>
+
+            <pre><code class="language-bash">cat /sys/class/graphics/fb0/virtual_size
+</code></pre>
+
+            <p>It should now show:</p>
+
+            <pre><code>
+    1680,1050
+</code></pre>
+
+            <hr>
+
+            <h1 id="workflow">⚠️ DAILY WORKFLOW (IMPORTANT)</h1>
+
+            <ol>
+                <li>Open <strong>Z:</strong> on Windows</li>
+                <li>Edit files in VS Code</li>
+                <li>Flask/Django auto-reload</li>
+                <li>Refresh browser</li>
+                <li>Done</li>
+            </ol>
+
+            <p>No uploads.<br>
+                No physical server access.</p>
+
+            <hr>
+
+            <h1 id="notes">🧠 NOTES (READ)</h1>
+
+            <ul>
+                <li>Always use <strong>trailing slash</strong> for Flask/Django paths</li>
+                <li>One project = one Gunicorn port</li>
+                <li>Dev server only (not production)</li>
+            </ul>
+
+            <hr>
 
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Sidebar Toggle logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('open');
+            const isOpen = sidebar.classList.contains('open');
+            menuToggle.innerText = isOpen ? '✕' : '☰';
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Close menu when a link is clicked (on mobile)
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // Wrap tables for responsiveness
+        document.querySelectorAll('table').forEach(table => {
+            if (!table.parentElement.classList.contains('table-wrapper')) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-wrapper';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            }
+        });
+
         const observerOptions = {
             root: null,
             rootMargin: '0px',
@@ -1316,7 +1581,7 @@ sudo systemctl start gunicorn-flask.service
                     e.preventDefault();
                     // Get clean text (ignoring potential HTML formatting from contenteditable)
                     const text = code.innerText || code.textContent;
-                    
+
                     // Clipboard API with fallback
                     if (navigator.clipboard && window.isSecureContext) {
                         navigator.clipboard.writeText(text).then(() => {

@@ -364,6 +364,9 @@
         <li><a href="#step16">📌 Step 16 — Access</a></li>
         <li><a href="#production">🚀 Step 17 — Production</a></li>
         <li><a href="#step18">🖥️ Step 18 — Monitor Resize</a></li>
+        <li><a href="#step19">🌍 Step 19 — DNS Setup</a></li>
+        <li><a href="#step20">🌐 Step 20 — Expose to Internet</a></li>
+        <li><a href="#step21">🔒 Step 21 — SSL Certificate</a></li>
         <li><a href="#workflow">⚠️ Daily Workflow</a></li>
         <li><a href="#notes">🧠 Notes</a></li>
     </ul>
@@ -1465,6 +1468,232 @@ ctrl + x
 
             <pre><code>
     1680,1050
+</code></pre>
+
+            <hr>
+
+            <h1 id="step19">🌍 STEP 19 — DNS SETUP (Domain & Subdomain)</h1>
+
+            <h2>19.1 What is DNS?</h2>
+            <p>DNS (Domain Name System) translates human-readable domain names (like <code>yourdomain.com</code>) into IP addresses (like your public IP). To make your server accessible via a domain name, you must configure DNS records at your domain registrar (e.g., GoDaddy, Cloudflare, Namecheap).</p>
+
+            <h2>19.2 Setting up the Main Domain</h2>
+            <p>To point your main domain (<code>yourdomain.com</code>) to your server's public IP address, create an <strong>A Record</strong>.</p>
+            <ul>
+                <li><strong>Type:</strong> A</li>
+                <li><strong>Name/Host:</strong> <code>@</code> (This represents the root domain)</li>
+                <li><strong>Value/Points to:</strong> Your Public IP Address (e.g., <code>203.0.113.50</code>)</li>
+                <li><strong>TTL:</strong> Auto / Default</li>
+            </ul>
+
+            <h2>19.3 Setting up a Subdomain</h2>
+            <p>To point a subdomain (like <code>dev.yourdomain.com</code>) to your server, create another <strong>A Record</strong>.</p>
+            <ul>
+                <li><strong>Type:</strong> A</li>
+                <li><strong>Name/Host:</strong> <code>dev</code> (This makes it <code>dev.yourdomain.com</code>)</li>
+                <li><strong>Value/Points to:</strong> Your Public IP Address</li>
+            </ul>
+            <p>Alternatively, to point a subdomain to another domain name, use a <strong>CNAME Record</strong>:</p>
+            <ul>
+                <li><strong>Type:</strong> CNAME</li>
+                <li><strong>Name/Host:</strong> <code>www</code></li>
+                <li><strong>Value/Points to:</strong> <code>yourdomain.com</code></li>
+            </ul>
+
+            <p><strong>Note:</strong> DNS changes can take a few minutes to 48 hours to propagate. Use <code>dnschecker.org</code> to verify.</p>
+
+            <hr>
+
+            <h1 id="step20">🌐 STEP 20 — EXPOSE TO INTERNET (Port Forwarding & Firewall)</h1>
+
+            <h2>20.1 Port Forwarding Concept</h2>
+            <p>Port forwarding tells your router to direct external internet traffic requesting a specific port to your internal server's LAN IP address.</p>
+            <ul>
+                <li><strong>External/Public IP:</strong> The IP address assigned to your router by your ISP.</li>
+                <li><strong>Internal/Private IP:</strong> Your server's local IP address (e.g., <code>192.168.5.25</code>).</li>
+            </ul>
+
+            <h2>20.2 Router Port Forwarding Setup Steps</h2>
+            <ol>
+                <li>Access your router's administration page via browser (usually <code>192.168.1.1</code> or <code>192.168.5.1</code>).</li>
+                <li>Navigate to the <strong>Port Forwarding</strong>, <strong>NAT</strong>, or <strong>Virtual Server</strong> section.</li>
+                <li>Add a new rule:
+                    <ul>
+                        <li><strong>Service Name:</strong> Web Server</li>
+                        <li><strong>Protocol:</strong> TCP</li>
+                        <li><strong>External/WAN Port:</strong> 80 (HTTP) or 443 (HTTPS)</li>
+                        <li><strong>Internal/LAN IP:</strong> 192.168.5.25</li>
+                        <li><strong>Internal/LAN Port:</strong> 80</li>
+                    </ul>
+                </li>
+                <li>Save/Apply the settings.</li>
+            </ol>
+
+            <h2>20.3 Firewall Inbound Rules (UFW)</h2>
+            <p>Ensure the Ubuntu firewall allows incoming web traffic on the specified ports:</p>
+            <pre><code class="language-bash"># Allow HTTP (Port 80)
+sudo ufw allow 80/tcp
+
+# Allow HTTPS (Port 443)
+sudo ufw allow 443/tcp
+
+# Reload Firewall to apply changes
+sudo ufw reload
+
+# Verify Firewall Status
+sudo ufw status
+</code></pre>
+
+            <h2>20.4 Hardware Firewall Inbound Rules</h2>
+            <p>If your network uses a dedicated hardware firewall (e.g., FortiGate, pfSense, Sophos, Cisco ASA) between the WAN and your LAN, you must configure inbound policy rules:</p>
+            <ol>
+                <li>Log in to the hardware firewall's administrative interface.</li>
+                <li>Create an <strong>Address Object</strong> pointing to the server's internal static IP (<code>192.168.5.25</code>).</li>
+                <li>Create an <strong>Access Control Policy/Rule</strong>:
+                    <ul>
+                        <li><strong>Source Zone:</strong> WAN (Incoming from Internet)</li>
+                        <li><strong>Destination Zone:</strong> LAN (or DMZ, pointing to the server's address object)</li>
+                        <li><strong>Services/Ports:</strong> HTTP (TCP 80), HTTPS (TCP 443)</li>
+                        <li><strong>Action:</strong> ALLOW / ACCEPT</li>
+                    </ul>
+                </li>
+                <li>Move the rule above any generic drop/deny rules in the policy order.</li>
+                <li>Save and commit the configuration changes.</li>
+            </ol>
+
+            <h2>20.5 Nginx Security Configuration</h2>
+            <p>To ensure your server only responds to valid domain requests (blocking direct IP scanners) and to restrict certain local apps to your LAN only, configure Nginx as follows.</p>
+
+            <h3>A. Block Direct IP Access (Catch-All)</h3>
+            <p>This default server block drops requests that don't match your configured domain.</p>
+            <pre><code class="language-nginx">server {
+    listen 80 default_server;
+    server_name _;
+    return 444; # Closes the connection without sending a response
+}</code></pre>
+
+            <h3>B. Public Domain Access (Static Files & Reverse Proxy)</h3>
+            <p>This configuration ensures the app is only accessible if the request explicitly matches <code>yourdomain.com</code>.</p>
+            <pre><code class="language-nginx">server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+
+    # 1. Static Files Example (PHP / HTML)
+    root /srv/dev/php;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # 2. Reverse Proxy Example (Flask / Django)
+    location /api/ {
+        proxy_pass http://127.0.0.1:5001/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_addrs;
+        
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}</code></pre>
+
+            <h3>C. Local LAN Access Only (Private IP)</h3>
+            <p>If you have internal tools (like phpMyAdmin or a dashboard) that should only be accessible when connected to the local network, use the <code>allow</code> and <code>deny</code> directives.</p>
+            <pre><code class="language-nginx">server {
+    listen 80;
+    server_name internal.local 192.168.5.25;
+
+    root /srv/dev/internal;
+    index index.html;
+
+    # Restrict access to LAN IPs only
+    allow 192.168.5.0/24; # Allow your local subnet
+    allow 127.0.0.1;      # Allow localhost
+    deny all;             # Block everyone else
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}</code></pre>
+
+            <p><strong>Apply Configuration:</strong></p>
+            <pre><code class="language-bash">sudo nginx -t
+sudo systemctl reload nginx
+</code></pre>
+
+            <hr>
+
+            <h1 id="step21">🔒 STEP 21 — SSL CERTIFICATE (HTTPS)</h1>
+
+            <h2>Option A: Automatic Certificate (Let's Encrypt / Certbot)</h2>
+            <p>Certbot is the easiest way to obtain a free SSL certificate from Let's Encrypt and automatically configure Nginx.</p>
+            
+            <h3>1. Install Certbot</h3>
+            <pre><code class="language-bash">sudo apt update
+sudo apt install certbot python3-certbot-nginx -y
+</code></pre>
+
+            <h3>2. Obtain and Install Certificate</h3>
+            <p>Run Certbot to automatically fetch the certificate and update your Nginx configuration. (Make sure your DNS A record points to your server and port 80/443 are open).</p>
+            <pre><code class="language-bash">sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+</code></pre>
+            <p>Follow the prompts to enter your email and select whether to redirect HTTP traffic to HTTPS (recommended).</p>
+
+            <h3>3. Verify Auto-Renewal</h3>
+            <p>Certbot sets up a systemd timer to automatically renew your certificates before they expire. Test the renewal process with a dry run:</p>
+            <pre><code class="language-bash">sudo certbot renew --dry-run
+</code></pre>
+
+            <h2>Option B: Manual Certificate Configuration (Purchased / Custom SSL)</h2>
+            <p>If you purchased an SSL certificate from a provider (like Namecheap, GoDaddy, or DigiCert) or have your own custom certificates, you need to configure Nginx manually.</p>
+
+            <h3>1. Upload Certificates to the Server</h3>
+            <p>Upload your certificate bundle and private key to a secure directory (e.g., <code>/etc/ssl/</code>). Ensure they have restricted permissions so only root can read the private key.</p>
+            <pre><code class="language-bash">sudo mkdir -p /etc/ssl/yourdomain
+# Upload fullchain.crt and private.key into this folder
+sudo chmod 600 /etc/ssl/yourdomain/private.key
+</code></pre>
+
+            <h3>2. Manual Nginx Configuration</h3>
+            <p>Edit your Nginx server block to use the custom certificates, listen on port 443, and redirect port 80 to 443.</p>
+            <pre><code class="language-bash">sudo nano /etc/nginx/sites-available/dev
+</code></pre>
+
+            <pre><code class="language-nginx"># Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS Server Block
+server {
+    listen 443 ssl;
+    server_name yourdomain.com www.yourdomain.com;
+
+    # Specify the paths to your custom certificates
+    ssl_certificate /etc/ssl/yourdomain/fullchain.crt;
+    ssl_certificate_key /etc/ssl/yourdomain/private.key;
+
+    # Recommended SSL settings for security
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    root /srv/dev/php;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}</code></pre>
+
+            <h3>3. Apply Configuration</h3>
+            <pre><code class="language-bash">sudo nginx -t
+sudo systemctl reload nginx
 </code></pre>
 
             <hr>
